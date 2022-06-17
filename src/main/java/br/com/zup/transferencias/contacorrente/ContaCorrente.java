@@ -29,7 +29,7 @@ public class ContaCorrente {
     private String titular;
 
     @Column(nullable = false)
-    private BigDecimal saldo = BigDecimal.ZERO;
+    private BigDecimal saldo;
 
     public ContaCorrente(String agencia, String numeroConta, String email, String cpf, String titular) {
         this.agencia = agencia;
@@ -37,6 +37,7 @@ public class ContaCorrente {
         this.email = email;
         this.cpf = cpf;
         this.titular = titular;
+        this.saldo = BigDecimal.ZERO;
     }
 
     /**

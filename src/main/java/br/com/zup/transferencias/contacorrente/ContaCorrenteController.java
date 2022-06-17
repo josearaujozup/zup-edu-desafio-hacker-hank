@@ -22,7 +22,8 @@ public class ContaCorrenteController {
 
     // Create: POST -> 201
     @PostMapping("/contas")
-    public ResponseEntity<Void> cadastrar(@RequestBody @Valid NovaContaCorrenteRequest request, UriComponentsBuilder uriComponentsBuilder){
+    public ResponseEntity<Void> cadastrar(@RequestBody @Valid NovaContaCorrenteRequest request,
+                                          UriComponentsBuilder uriComponentsBuilder){
 
         if (contaCorrenteRepository.existsByCpf(request.getCpf())){
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Cpf já cadastrado na api");
