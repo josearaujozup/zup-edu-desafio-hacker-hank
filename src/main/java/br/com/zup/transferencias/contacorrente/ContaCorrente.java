@@ -4,6 +4,9 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 
 @Entity
+@Table(uniqueConstraints = {
+        @UniqueConstraint(name = "UK_CPF", columnNames = {"cpf"}),
+        @UniqueConstraint(name = "UK_EMAIL", columnNames = {"email"})})
 public class ContaCorrente {
 
     @Id
@@ -11,15 +14,15 @@ public class ContaCorrente {
     private Long id;
 
     @Column(nullable = false, length = 4)
-    private Integer agencia;
+    private String agencia;
 
     @Column(nullable = false, length = 6)
-    private Integer numeroConta;
+    private String numeroConta;
 
     @Column(nullable = false)
     private String email;
 
-    @Column(nullable = false, length = 11)
+    @Column(nullable = false, length = 14)
     private String cpf;
 
     @Column(nullable = false, length = 120)
@@ -28,8 +31,7 @@ public class ContaCorrente {
     @Column(nullable = false)
     private BigDecimal saldo = BigDecimal.ZERO;
 
-    public ContaCorrente(Long id, Integer agencia, Integer numeroConta, String email, String cpf, String titular) {
-        this.id = id;
+    public ContaCorrente(String agencia, String numeroConta, String email, String cpf, String titular) {
         this.agencia = agencia;
         this.numeroConta = numeroConta;
         this.email = email;
@@ -47,5 +49,17 @@ public class ContaCorrente {
 
     public Long getId() {
         return id;
+    }
+
+    public String getAgencia() {
+        return agencia;
+    }
+
+    public String getNumeroConta() {
+        return numeroConta;
+    }
+
+    public BigDecimal getSaldo() {
+        return saldo;
     }
 }
