@@ -8,11 +8,13 @@ import javax.validation.constraints.*;
 public class NovaContaCorrenteRequest {
 
     @NotNull
-    @Size(min = 4, max = 4)
+//    @Size(min = 4, max = 4)
+    @Pattern(regexp="[\\d]{4}")
     private String agencia;
 
     @NotNull
-    @Size(min = 6, max = 6)
+//    @Size(min = 6, max = 6)
+    @Pattern(regexp="[\\d]{6}")
     private String numeroConta;
 
     @NotBlank
@@ -21,6 +23,7 @@ public class NovaContaCorrenteRequest {
 
     @NotBlank
     @CPF
+    @Pattern(regexp = "^[0-9]{3}\\.[0-9]{3}\\.[0-9]{3}\\-[0-9]{2}$")
     private String cpf;
 
     @NotBlank

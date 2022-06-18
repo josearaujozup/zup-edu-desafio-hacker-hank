@@ -1,5 +1,6 @@
 package br.com.zup.transferencias.exception;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -9,7 +10,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.validation.ConstraintViolationException;
+import org.hibernate.exception.ConstraintViolationException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
@@ -45,17 +46,28 @@ public class CustomExceptionHandler {
         return ResponseEntity.status(httpStatus).body(erroPadronizado);
     }
 
-    @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
-    public ResponseEntity<ErroPadronizado> handleUniqueConstraintErrors(SQLIntegrityConstraintViolationException ex,
+//    @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErroPadronizado> handleUniqueConstraintErrors(DataIntegrityViolationException ex,
                                                                 WebRequest webRequest) {
         HttpStatus httpStatus = HttpStatus.UNPROCESSABLE_ENTITY;
         String mensagemGeral = "Houve um problema com a sua requisição.";
         ErroPadronizado erroPadronizado = gerarErroPadronizado(
                 httpStatus, webRequest, mensagemGeral
         );
-        erroPadronizado.adicionarErro(ex.getMessage());
+//        erroPadronizado.adicionarErro(ex.getMessage());
 
         Throwable cause = ex.getCause();
+
+        String failedField = ((ConstraintViolationException) cause).getConstraintName();
+
+        if (failedField.contains("UK_CPF")) {
+            erroPadronizado.adicionarErro("Cpf já cadastrado na api");
+        }
+
+        if (failedField.contains("UK_EMAIL")) {
+            erroPadronizado.adicionarErro("Email já cadastrado na api");
+        }
 
         return ResponseEntity.status(httpStatus).body(erroPadronizado);
     }
