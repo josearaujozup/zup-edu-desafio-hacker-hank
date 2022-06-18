@@ -13,16 +13,15 @@ import org.springframework.web.util.UriComponentsBuilder;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.net.URI;
-import java.util.List;
 
 @RestController
-public class TransferenciaController {
+public class RealizarTransferenciaController {
 
     private TransferenciaRepository transferenciaRepository;
 
     private ContaCorrenteRepository contaCorrenteRepository;
 
-    public TransferenciaController(TransferenciaRepository transferenciaRepository, ContaCorrenteRepository contaCorrenteRepository) {
+    public RealizarTransferenciaController(TransferenciaRepository transferenciaRepository, ContaCorrenteRepository contaCorrenteRepository) {
         this.transferenciaRepository = transferenciaRepository;
         this.contaCorrenteRepository = contaCorrenteRepository;
     }
@@ -32,16 +31,14 @@ public class TransferenciaController {
     @Transactional
     public ResponseEntity<Void> cadastrar(@RequestBody @Valid TransferenciaRequest request, UriComponentsBuilder uriComponentsBuilder){
 
-        ContaCorrente contaOrigem = contaCorrenteRepository.findByAgenciaAndNumeroConta(
-                request.getContaOrigemRequest().getAgencia(),request.getContaOrigemRequest().getNumeroConta())
+        ContaCorrente contaOrigem = contaCorrenteRepository.findById(request.getIdContaOrigem())
                 .orElseThrow(
                         () -> new ResponseStatusException(
                                 HttpStatus.NOT_FOUND, "Conta origem não encontrado."
                         )
                 );
 
-        ContaCorrente contaDestino = contaCorrenteRepository.findByAgenciaAndNumeroConta(
-                        request.getContaDestinoRequest().getAgencia(),request.getContaDestinoRequest().getNumeroConta())
+        ContaCorrente contaDestino = contaCorrenteRepository.findById(request.getIdContaDestino())
                 .orElseThrow(
                         () -> new ResponseStatusException(
                                 HttpStatus.NOT_FOUND, "Conta destino não encontrado."

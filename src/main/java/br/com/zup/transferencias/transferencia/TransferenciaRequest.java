@@ -9,41 +9,42 @@ import java.math.BigDecimal;
 
 public class TransferenciaRequest {
 
+    @NotNull
     @Positive
     private BigDecimal valor;
 
     @NotNull
-    @Valid
-    private ContaTransferenciaRequest contaOrigemRequest;
+    @Positive
+    private Long idContaOrigem;
 
     @NotNull
-    @Valid
-    private ContaTransferenciaRequest contaDestinoRequest;
+    @Positive
+    private Long idContaDestino;
 
     public TransferenciaRequest() {
     }
 
-    public TransferenciaRequest(BigDecimal valor, ContaTransferenciaRequest contaOrigem, ContaTransferenciaRequest contaDestino) {
+    public TransferenciaRequest(BigDecimal valor, Long idContaOrigem, Long idContaDestino) {
         this.valor = valor;
-        this.contaOrigemRequest = contaOrigem;
-        this.contaDestinoRequest = contaDestino;
+        this.idContaOrigem = idContaOrigem;
+        this.idContaDestino = idContaDestino;
     }
 
     public BigDecimal getValor() {
         return valor;
     }
 
-    public ContaTransferenciaRequest getContaOrigemRequest() {
-        return contaOrigemRequest;
+    public Long getIdContaOrigem() {
+        return idContaOrigem;
     }
 
-    public ContaTransferenciaRequest getContaDestinoRequest() {
-        return contaDestinoRequest;
+    public Long getIdContaDestino() {
+        return idContaDestino;
     }
 
     public Transferencia toModel(ContaCorrente contaOrigem, ContaCorrente contaDestino) {
-        contaOrigem.sacar(this.valor);
-        contaDestino.depositar(this.valor);
+        contaOrigem.debitar(this.valor);
+        contaDestino.creditar(this.valor);
         return new Transferencia(this.valor,contaOrigem,contaDestino);
     }
 }

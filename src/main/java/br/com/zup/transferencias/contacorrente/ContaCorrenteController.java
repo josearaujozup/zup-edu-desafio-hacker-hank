@@ -52,5 +52,4 @@ public class ContaCorrenteController {
         return ResponseEntity.ok(new ContaCorrenteResponse(contaCorrente.getAgencia(), contaCorrente.getNumeroConta(), contaCorrente.getSaldo()));
     }
 
-
 }

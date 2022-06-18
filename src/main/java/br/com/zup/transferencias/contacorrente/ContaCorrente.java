@@ -64,11 +64,11 @@ public class ContaCorrente {
         return saldo;
     }
 
-    public void sacar(BigDecimal valor) {
+    public void debitar(BigDecimal valor) {
         this.saldo = this.saldo.subtract(valor);
     }
 
-    public void depositar(BigDecimal valor) {
+    public void creditar(BigDecimal valor) {
         this.saldo =  this.saldo.add(valor);
     }
 }
