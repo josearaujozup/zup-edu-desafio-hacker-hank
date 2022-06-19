@@ -1,8 +1,8 @@
-package br.com.zup.transferencias.contacorrente;
+package br.com.zup.transferencias.transferencia;
 
+import br.com.zup.transferencias.contacorrente.ContaCorrenteRepository;
 import br.com.zup.transferencias.exception.ErroPadronizado;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc(printOnlyOnFailure = false)
 @ActiveProfiles("test")
-class ContaCorrenteConsultarControllerTest {
+class ListarTransferenciaControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -36,16 +36,20 @@ class ContaCorrenteConsultarControllerTest {
     @Autowired
     private ContaCorrenteRepository contaCorrenteRepository;
 
+    @Autowired
+    private TransferenciaRepository transferenciaRepository;
+
     @BeforeEach
     void setUp() {
+        transferenciaRepository.deleteAll();
         contaCorrenteRepository.deleteAll();
     }
 
     @Test
-    void naoDeveConsultarUmaContaQueNaoEstaCadastrado() throws Exception {
+    void naoDeveListarTransferenciasDeUmaContaQueNaoEstaCadastrado() throws Exception {
         // cenário
         MockHttpServletRequestBuilder request = get(
-                "/contas/{id}", Long.MAX_VALUE
+                "/contas/{id}/transferencias", Long.MAX_VALUE
         ).contentType(APPLICATION_JSON);
 
         // ação e corretude
@@ -62,34 +66,6 @@ class ContaCorrenteConsultarControllerTest {
         assertThat(mensagens, containsInAnyOrder("Conta Corrente não encontrada"));
     }
 
-    @Test
-    void deveConsultarUmaConta() throws Exception {
-        // cenário
-        ContaCorrente contaCorrente = new ContaCorrente(
-                "0001",
-                "889638",
-                "joao@zup.com.br",
-                "231.256.710-51",
-                "João"
-        );
+    
 
-        contaCorrenteRepository.save(contaCorrente);
-
-        MockHttpServletRequestBuilder request = get("/contas/{id}", contaCorrente.getId()).contentType(
-                APPLICATION_JSON
-        );
-
-        // ação e corretude
-        String payload = mockMvc.perform(request)
-                .andExpect(status().isOk())
-                .andReturn()
-                .getResponse()
-                .getContentAsString(UTF_8);
-
-        ContaCorrenteResponse contaCorrenteResponse = objectMapper.readValue(payload, ContaCorrenteResponse.class);
-
-        Assertions.assertThat(contaCorrenteResponse)
-                .extracting("agencia", "numeroConta", "saldo")
-                .contains(contaCorrente.getAgencia(), contaCorrente.getNumeroConta(), contaCorrente.getSaldo());
-    }
 }
