@@ -37,7 +37,7 @@ public class ContaCorrente {
         this.email = email;
         this.cpf = cpf;
         this.titular = titular;
-        this.saldo = BigDecimal.ZERO;
+        this.saldo = BigDecimal.ZERO.setScale(2);
     }
 
     /**
