@@ -1,5 +1,7 @@
 package br.com.zup.transferencias.contacorrente;
 
+import br.com.zup.transferencias.exception.SaldoInsuficienteException;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 
@@ -65,6 +67,11 @@ public class ContaCorrente {
     }
 
     public void debitar(BigDecimal valor) {
+
+        if(this.saldo.compareTo(valor) < 0){
+            throw new SaldoInsuficienteException("Conta com saldo Insuficiente");
+        }
+
         this.saldo = this.saldo.subtract(valor);
     }
 

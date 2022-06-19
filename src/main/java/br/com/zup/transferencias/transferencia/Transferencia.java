@@ -58,4 +58,9 @@ public class Transferencia {
     public LocalDateTime getInstanteTransferencia() {
         return instanteTransferencia;
     }
+
+    public void realizarTransferencia() {
+        this.contaOrigem.debitar(this.valor);
+        this.contaDestino.creditar(this.valor);
+    }
 }

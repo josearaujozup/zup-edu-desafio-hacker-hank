@@ -46,6 +46,7 @@ public class RealizarTransferenciaController {
                 );
 
         Transferencia transferencia = request.toModel(contaOrigem, contaDestino);
+        transferencia.realizarTransferencia();
         transferenciaRepository.save(transferencia);
 
         URI location = uriComponentsBuilder.path("/transferencias/{id}")

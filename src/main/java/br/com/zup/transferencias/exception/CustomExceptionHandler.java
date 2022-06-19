@@ -46,6 +46,19 @@ public class CustomExceptionHandler {
         return ResponseEntity.status(httpStatus).body(erroPadronizado);
     }
 
+    @ExceptionHandler(SaldoInsuficienteException.class)
+    public ResponseEntity<ErroPadronizado> handleResponseStatus(RuntimeException ex,
+                                                                WebRequest webRequest) {
+        HttpStatus httpStatus = HttpStatus.UNPROCESSABLE_ENTITY;
+        String mensagemGeral = "Houve um problema com a sua requisição.";
+        ErroPadronizado erroPadronizado = gerarErroPadronizado(
+                httpStatus, webRequest, mensagemGeral
+        );
+        erroPadronizado.adicionarErro(ex.getMessage());
+
+        return ResponseEntity.status(httpStatus).body(erroPadronizado);
+    }
+
 //    @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ErroPadronizado> handleUniqueConstraintErrors(DataIntegrityViolationException ex,
