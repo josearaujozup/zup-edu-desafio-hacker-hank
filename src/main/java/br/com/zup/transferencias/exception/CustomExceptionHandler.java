@@ -3,6 +3,7 @@ package br.com.zup.transferencias.exception;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -42,6 +43,21 @@ public class CustomExceptionHandler {
                 httpStatus, webRequest, mensagemGeral
         );
         erroPadronizado.adicionarErro(ex.getReason());
+
+        return ResponseEntity.status(httpStatus).body(erroPadronizado);
+    }
+
+    @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
+    public ResponseEntity<ErroPadronizado> handleObjectOptimisticLockingFailure(ObjectOptimisticLockingFailureException ex,
+                                                                                WebRequest webRequest) {
+        HttpStatus httpStatus = HttpStatus.CONFLICT;
+        String mensagemGeral = "Houve um problema com a sua requisição.";
+        ErroPadronizado erroPadronizado = gerarErroPadronizado(
+                httpStatus, webRequest, mensagemGeral
+        );
+        erroPadronizado.adicionarErro(
+                "O recurso que você tentou atualizar mudou de estado. Por favor, tente novamente."
+        );
 
         return ResponseEntity.status(httpStatus).body(erroPadronizado);
     }

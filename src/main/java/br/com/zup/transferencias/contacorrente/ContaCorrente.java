@@ -33,6 +33,9 @@ public class ContaCorrente {
     @Column(nullable = false)
     private BigDecimal saldo;
 
+    @Version
+    private int versao;
+
     public ContaCorrente(String agencia, String numeroConta, String email, String cpf, String titular) {
         this.agencia = agencia;
         this.numeroConta = numeroConta;

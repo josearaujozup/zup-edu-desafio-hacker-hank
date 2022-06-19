@@ -43,8 +43,6 @@ public class TransferenciaRequest {
     }
 
     public Transferencia toModel(ContaCorrente contaOrigem, ContaCorrente contaDestino) {
-//        contaOrigem.debitar(this.valor);
-//        contaDestino.creditar(this.valor);
         return new Transferencia(this.valor,contaOrigem,contaDestino);
     }
 }

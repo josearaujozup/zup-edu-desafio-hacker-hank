@@ -34,14 +34,14 @@ public class RealizarTransferenciaController {
         ContaCorrente contaOrigem = contaCorrenteRepository.findById(request.getIdContaOrigem())
                 .orElseThrow(
                         () -> new ResponseStatusException(
-                                HttpStatus.NOT_FOUND, "Conta origem não encontrado."
+                                HttpStatus.NOT_FOUND, "Conta origem não encontrada."
                         )
                 );
 
         ContaCorrente contaDestino = contaCorrenteRepository.findById(request.getIdContaDestino())
                 .orElseThrow(
                         () -> new ResponseStatusException(
-                                HttpStatus.NOT_FOUND, "Conta destino não encontrado."
+                                HttpStatus.NOT_FOUND, "Conta destino não encontrada."
                         )
                 );
 
@@ -52,6 +52,7 @@ public class RealizarTransferenciaController {
         URI location = uriComponentsBuilder.path("/transferencias/{id}")
                 .buildAndExpand(transferencia.getId())
                 .toUri();
+
         return ResponseEntity.created(location).build();
     }
 
