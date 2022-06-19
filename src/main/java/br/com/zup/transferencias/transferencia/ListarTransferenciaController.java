@@ -30,7 +30,7 @@ public class ListarTransferenciaController {
     }
 
     @GetMapping("/contas/{id}/transferencias")
-    public ResponseEntity<List<TransferenciaResponse>> listarTransferencias(@PathVariable Long id){
+    public ResponseEntity<List<TransferenciaResponse>> listar(@PathVariable Long id){
 
         ContaCorrente contaCorrente = contaCorrenteRepository.findById(id).orElseThrow(
                 () -> new ResponseStatusException(NOT_FOUND, "Conta Corrente não encontrada"));

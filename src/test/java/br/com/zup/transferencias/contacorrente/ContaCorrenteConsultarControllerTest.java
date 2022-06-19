@@ -42,7 +42,7 @@ class ContaCorrenteConsultarControllerTest {
     }
 
     @Test
-    void deveConsultarUmCurso() throws Exception {
+    void deveConsultarUmaConta() throws Exception {
         // cenário
         ContaCorrente contaCorrente = new ContaCorrente(
                 "0001",

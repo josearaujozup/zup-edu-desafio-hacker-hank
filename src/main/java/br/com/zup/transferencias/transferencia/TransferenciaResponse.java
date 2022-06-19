@@ -9,9 +9,9 @@ public class TransferenciaResponse {
 
     private BigDecimal valor;
 
-    private ContaCorrente contaOrigem;
+    private ContaCorrenteTransferenciaResponse contaOrigem;
 
-    private ContaCorrente contaDestino;
+    private ContaCorrenteTransferenciaResponse contaDestino;
 
     private LocalDateTime instanteTransferencia;
 
@@ -20,8 +20,8 @@ public class TransferenciaResponse {
 
     public TransferenciaResponse(Transferencia transferencia) {
         this.valor = transferencia.getValor();
-        this.contaOrigem = transferencia.getContaOrigem();
-        this.contaDestino = transferencia.getContaDestino();
+        this.contaOrigem = new ContaCorrenteTransferenciaResponse(transferencia.getContaOrigem());
+        this.contaDestino = new ContaCorrenteTransferenciaResponse(transferencia.getContaDestino());
         this.instanteTransferencia = transferencia.getInstanteTransferencia();
     }
 
@@ -29,11 +29,11 @@ public class TransferenciaResponse {
         return valor;
     }
 
-    public ContaCorrente getContaOrigem() {
+    public ContaCorrenteTransferenciaResponse getContaOrigem() {
         return contaOrigem;
     }
 
-    public ContaCorrente getContaDestino() {
+    public ContaCorrenteTransferenciaResponse getContaDestino() {
         return contaDestino;
     }
 
