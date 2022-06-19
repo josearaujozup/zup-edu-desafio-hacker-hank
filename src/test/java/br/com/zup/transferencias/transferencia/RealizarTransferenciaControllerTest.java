@@ -16,10 +16,12 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrlPattern;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -199,6 +201,107 @@ class RealizarTransferenciaControllerTest {
         assertThat(erroPadronizado.getMensagens())
                 .hasSize(1)
                 .contains("Conta destino não encontrada.");
+    }
+
+    @Test
+    void naoDeveCadastrarUmaTransferenciaComContaOrigemComSaldoInsuficiente() throws Exception {
+        // Cenário
+        ContaCorrente contaOrigem = new ContaCorrente(
+                "0001",
+                "889638",
+                "joao@zup.com.br",
+                "231.256.710-51",
+                "João"
+        );
+        contaOrigem.creditar(new BigDecimal("250.0"));
+        contaCorrenteRepository.save(contaOrigem);
+
+        ContaCorrente contaDestino = new ContaCorrente(
+                "0001",
+                "135456",
+                "pedro@zup.com.br",
+                "735.464.890-63",
+                "pedro"
+        );
+
+        contaCorrenteRepository.save(contaDestino);
+
+        TransferenciaRequest transferenciaRequest = new TransferenciaRequest(
+                new BigDecimal("300.0"),
+                contaOrigem.getId(),
+                contaDestino.getId()
+        );
+
+        String payloadRequest = objectMapper.writeValueAsString(transferenciaRequest);
+
+        MockHttpServletRequestBuilder request = post("/transferencias")
+                .header("Accept-Language", "pt-br")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(payloadRequest);
+
+        // Ação e Corretude
+        String payloadResponse = mockMvc.perform(request).
+                andExpect(
+                        status().isUnprocessableEntity()
+                )
+                .andReturn()
+                .getResponse()
+                .getContentAsString(StandardCharsets.UTF_8);
+
+        ErroPadronizado erroPadronizado = objectMapper.readValue(payloadResponse, ErroPadronizado.class);
+
+        assertThat(erroPadronizado.getMensagens())
+                .hasSize(1)
+                .contains("Conta com saldo Insuficiente");
+    }
+
+    @Test
+    void deveCadastrarUmaTransferencia() throws Exception {
+        // Cenário
+        ContaCorrente contaOrigem = new ContaCorrente(
+                "0001",
+                "889638",
+                "joao@zup.com.br",
+                "231.256.710-51",
+                "João"
+        );
+        contaOrigem.creditar(new BigDecimal("300.0"));
+        contaCorrenteRepository.save(contaOrigem);
+
+        ContaCorrente contaDestino = new ContaCorrente(
+                "0001",
+                "135456",
+                "pedro@zup.com.br",
+                "735.464.890-63",
+                "pedro"
+        );
+
+        contaCorrenteRepository.save(contaDestino);
+
+        TransferenciaRequest transferenciaRequest = new TransferenciaRequest(
+                new BigDecimal("300.0"),
+                contaOrigem.getId(),
+                contaDestino.getId()
+        );
+
+        String payloadRequest = objectMapper.writeValueAsString(transferenciaRequest);
+
+        MockHttpServletRequestBuilder request = post("/transferencias")
+                .header("Accept-Language", "pt-br")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(payloadRequest);
+
+        // Ação e Corretude
+        mockMvc.perform(request).
+                andExpect(
+                        status().isCreated()
+                )
+                .andExpect(
+                        redirectedUrlPattern("http://localhost/transferencias/*")
+                );
+
+        List<Transferencia> transferencias =transferenciaRepository.findAll();
+        assertEquals(1, transferencias.size());
     }
 
 }
