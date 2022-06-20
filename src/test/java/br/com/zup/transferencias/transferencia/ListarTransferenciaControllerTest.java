@@ -15,7 +15,9 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
+import java.io.DataInput;
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Set;
 
@@ -121,7 +123,7 @@ class ListarTransferenciaControllerTest {
         contaCorrenteRepository.save(contaCorrente2);
 
         Transferencia transferencia1 = new Transferencia(new BigDecimal("200.0"), contaCorrente1, contaCorrente2);
-        Transferencia transferencia2 = new Transferencia(new BigDecimal("50.0"), contaCorrente1, contaCorrente2);
+        Transferencia transferencia2 = new Transferencia(new BigDecimal("50.0"), contaCorrente2, contaCorrente1);
 
         transferenciaRepository.save(transferencia1);
         transferenciaRepository.save(transferencia2);
@@ -134,7 +136,7 @@ class ListarTransferenciaControllerTest {
         // ação e corretude
         mockMvc.perform(request)
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content",hasSize(2)));
+                .andExpect(jsonPath("$.content", hasSize(2)));
 
     }
 
