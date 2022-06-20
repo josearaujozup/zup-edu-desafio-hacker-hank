@@ -45,6 +45,12 @@ public class RealizarTransferenciaController {
                         )
                 );
 
+        if(contaOrigem.equals(contaDestino)){
+            throw new ResponseStatusException(
+                    HttpStatus.UNPROCESSABLE_ENTITY, "Conta de destino igual a conta de origem."
+            );
+        }
+
         Transferencia transferencia = request.toModel(contaOrigem, contaDestino);
         transferencia.realizarTransferencia();
         transferenciaRepository.save(transferencia);
