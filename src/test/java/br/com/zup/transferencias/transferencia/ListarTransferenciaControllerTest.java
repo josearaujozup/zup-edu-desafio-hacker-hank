@@ -10,18 +10,23 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Set;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -86,19 +91,51 @@ class ListarTransferenciaControllerTest {
         ).contentType(APPLICATION_JSON);
 
         // ação e corretude
-        String payloadResponse = mockMvc.perform(request)
+        mockMvc.perform(request)
                 .andExpect(status().isOk())
-                .andReturn()
-                .getResponse()
-                .getContentAsString(UTF_8);
+                .andExpect(jsonPath("$.content",hasSize(0)));
 
-        TypeFactory typeFactory = objectMapper.getTypeFactory();
-
-        List<TransferenciaResponse> transferencias = objectMapper.readValue(payloadResponse,typeFactory.constructCollectionType(
-                List.class,
-                TransferenciaResponse.class
-        ));
-
-        assertTrue(transferencias.isEmpty());
     }
+
+    @Test
+    void deveDevolverUmaListaDeTransferencias() throws Exception {
+        // cenário
+        ContaCorrente contaCorrente1 = new ContaCorrente(
+                "0001",
+                "889638",
+                "joao@zup.com.br",
+                "231.256.710-51",
+                "João"
+        );
+        contaCorrente1.creditar(new BigDecimal("300.0"));
+        contaCorrenteRepository.save(contaCorrente1);
+
+        ContaCorrente contaCorrente2 = new ContaCorrente(
+                "0001",
+                "009988",
+                "fagner@zup.com.br",
+                "184.841.590-78",
+                "Fagner"
+        );
+
+        contaCorrenteRepository.save(contaCorrente2);
+
+        Transferencia transferencia1 = new Transferencia(new BigDecimal("200.0"), contaCorrente1, contaCorrente2);
+        Transferencia transferencia2 = new Transferencia(new BigDecimal("50.0"), contaCorrente1, contaCorrente2);
+
+        transferenciaRepository.save(transferencia1);
+        transferenciaRepository.save(transferencia2);
+
+
+        MockHttpServletRequestBuilder request = get(
+                "/contas/{id}/transferencias", contaCorrente1.getId()
+        ).contentType(APPLICATION_JSON);
+
+        // ação e corretude
+        mockMvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content",hasSize(2)));
+
+    }
+
 }

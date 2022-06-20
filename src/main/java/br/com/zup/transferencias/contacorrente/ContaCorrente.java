@@ -4,6 +4,7 @@ import br.com.zup.transferencias.exception.SaldoInsuficienteException;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.Objects;
 
 @Entity
 @Table(uniqueConstraints = {
@@ -80,5 +81,18 @@ public class ContaCorrente {
 
     public void creditar(BigDecimal valor) {
         this.saldo =  this.saldo.add(valor);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ContaCorrente that = (ContaCorrente) o;
+        return id.equals(that.id) && cpf.equals(that.cpf);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, cpf);
     }
 }
