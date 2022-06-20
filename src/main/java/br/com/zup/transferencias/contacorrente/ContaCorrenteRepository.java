@@ -9,5 +9,4 @@ public interface ContaCorrenteRepository extends JpaRepository<ContaCorrente, Lo
 
     public boolean existsByEmail(String email);
 
-    public Optional<ContaCorrente> findByAgenciaAndNumeroConta(String agencia, String numeroConta);
 }
